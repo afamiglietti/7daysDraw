@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>7 Days Building Calculator</title>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+  <style>
+  h2 {
+    margin: 0;
+  }
+  #readout {
+    width: 300px;
+    background: white;
+    border: 1px dashed grey;
+    position: fixed;
+    top: 30px;
+    left: 900px;
+    padding: 10px;
+  }
+  </style>
+</head>
+<body>
+  <canvas id="theCanvas"></canvas>
+  <div id='readout'>
+  <h2>7days Construction Calculator</h2>
+  Materials needed:
+  <ul>
+    <li>Concrete Mix: <span id="mixNo">0</span></li>
+    <li>Gravel: <span id="gravelNo">0</span></li>
+    <li>Cement: <span id="cementNo">0</span></li>
+    <li>Iron Pipe: <span id="pipeNo">0</span></li>
+    <li>Wood Plank: <span id="plankNo">0</span></li>
+    <li>Iron Ore: <span id="ironNo">0</span></li>
+    <li>Stone: <span id="stoneNo">0</span></li>
+  </ul>
+  </div>
+
+  <script>
+  var blocks = 0;
+  var gridSize = 15;
+  var canvasSize = 2000;
+  var canvas = document.getElementById("theCanvas");
+  var context = canvas.getContext("2d");
+  function drawGrid(){
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+    $('#theCanvas').one("click", calcOnClick);
+
+    for (var x = 0.5; x < canvasSize; x += gridSize) {
+    context.moveTo(x, 0);
+    context.lineTo(x, canvasSize);
+  }
+
+    for (var y = 0.5; y < canvasSize; y += gridSize) {
+      context.moveTo(0, y);
+      context.lineTo(canvasSize, y);
+    }
+  context.strokeStyle = "#00FFFF";
+  context.stroke();
+
+  }
+
+  function calcOnClick(e) {
+    var cursorPos = getCursorPosition(e);
+    var startX = Math.floor(cursorPos[0]/gridSize) * gridSize;
+    var startY = Math.floor(cursorPos[1]/gridSize) * gridSize;
+    context.beginPath();
+    context.moveTo(startX, startY);
+    context.lineTo(startX, startY+15);
+    context.lineTo(startX+15, startY+15);
+    context.lineTo(startX+15, startY);
+    context.lineTo(startX, startY);
+    context.strokeStyle = "#000";
+    context.stroke();
+    updateCounts();
+    setTimeout(function(){$('#theCanvas').one("click", calcOnClick);}, 100);
+
+  }
+
+  function getCursorPosition(e) {
+    if (e.pageX != undefined && e.pageY != undefined) {
+      x = e.clientX + document.body.scrollLeft +
+            document.documentElement.scrollLeft;
+	y = e.clientY + document.body.scrollTop +
+            document.documentElement.scrollTop;
+  }
+  x -= canvas.offsetLeft;
+   y -= canvas.offsetTop;
+  var pos = [x,y];
+    return(pos);
+}
+  function updateCounts() {
+    blocks++;
+    var pipes = blocks*8;
+    var planks = blocks*2;
+    var ore = blocks/3;
+    var stone = blocks/4;
+    document.getElementById("mixNo").textContent = blocks.toString();
+    document.getElementById("gravelNo").textContent = blocks.toString();
+    document.getElementById("cementNo").textContent = blocks.toString();
+    document.getElementById("pipeNo").textContent = pipes.toString();
+    document.getElementById("plankNo").textContent = planks.toString();
+    document.getElementById("ironNo").textContent = ore.toString();
+    document.getElementById("stoneNo").textContent = stone.toString();
+  }
+
+  $(document).ready(function(){
+    drawGrid();
+  })
+</script>
+</body>
+</html>
